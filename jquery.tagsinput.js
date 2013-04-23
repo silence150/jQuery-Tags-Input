@@ -86,7 +86,7 @@
 				value = jQuery.trim(value);
 		
 				if (options.unique) {
-					var skipTag = $(this).tagExist(value);
+					var skipTag = $(this).tagExist(value, {caseSensitive:(options.caseSentitive)});
 					if(skipTag == true) {
 					    //Marks fake input as not_valid to let styling it
     				    $('#'+id+'_tag').addClass('not_valid');
@@ -161,10 +161,22 @@
 			return false;
 		};
 	
-	$.fn.tagExist = function(val) {
+	$.fn.tagExist = function(val, options) {
 		var id = $(this).attr('id');
 		var tagslist = $(this).val().split(delimiter[id]);
-		return (jQuery.inArray(val, tagslist) >= 0); //true when tag exists, false when not
+		var rslt = null
+		$.each(tagslist, function(index, existingVal) {
+			if (options.caseSentive) {
+				val = val.toLowerCase()
+				existingVal = existingVal.toLowerCase()
+			}
+			if (rslt == null && existingVal.equals(val)) {
+				rslt = index;
+				return false; //"break"
+  		}
+		})
+		
+		return (rslt !== null); //true when tag exists, false when not
 	};
 	
 	// clear all existing tags and import new ones from a string
@@ -189,7 +201,8 @@
       placeholderColor:'#666666',
       autosize: true,
       comfortZone: 20,
-      inputPadding: 6*2
+      inputPadding: 6*2,
+      caseSensitive: true
     },options);
 
 		this.each(function() { 
@@ -261,13 +274,13 @@
 						$(data.fake_input).autocomplete(settings.autocomplete_url, settings.autocomplete);
 						$(data.fake_input).bind('result',data,function(event,data,formatted) {
 							if (data) {
-								$('#'+id).addTag(data[0] + "",{focus:true,unique:(settings.unique)});
+								$('#'+id).addTag(data[0] + "",{focus:true,unique:(settings.unique),caseSensitive:(settings.caseSensitive)});
 							}
 					  	});
 					} else if (jQuery.ui.autocomplete !== undefined) {
 						$(data.fake_input).autocomplete(autocomplete_options);
 						$(data.fake_input).bind('autocompleteselect',data,function(event,ui) {
-							$(event.data.real_input).addTag(ui.item.value,{focus:true,unique:(settings.unique)});
+							$(event.data.real_input).addTag(ui.item.value,{focus:true,unique:(settings.unique),,caseSensitive:(settings.caseSensitive)});
 							return false;
 						});
 					}
@@ -280,7 +293,7 @@
 							var d = $(this).attr('data-default');
 							if ($(event.data.fake_input).val()!='' && $(event.data.fake_input).val()!=d) { 
 								if( (event.data.minChars <= $(event.data.fake_input).val().length) && (!event.data.maxChars || (event.data.maxChars >= $(event.data.fake_input).val().length)) )
-									$(event.data.real_input).addTag($(event.data.fake_input).val(),{focus:true,unique:(settings.unique)});
+									$(event.data.real_input).addTag($(event.data.fake_input).val(),{focus:true,unique:(settings.unique),caseSensitive:(settings.caseSensitive)});
 							} else {
 								$(event.data.fake_input).val($(event.data.fake_input).attr('data-default'));
 								$(event.data.fake_input).css('color',settings.placeholderColor);
@@ -294,7 +307,7 @@
 					if (event.which==event.data.delimiter.charCodeAt(0) || event.which==13 ) {
 					    event.preventDefault();
 						if( (event.data.minChars <= $(event.data.fake_input).val().length) && (!event.data.maxChars || (event.data.maxChars >= $(event.data.fake_input).val().length)) )
-							$(event.data.real_input).addTag($(event.data.fake_input).val(),{focus:true,unique:(settings.unique)});
+							$(event.data.real_input).addTag($(event.data.fake_input).val(),{focus:true,unique:(settings.unique),caseSensitive:(settings.caseSensitive)});
 					  	$(event.data.fake_input).resetAutosize(settings);
 						return false;
 					} else if (event.data.autosize) {
