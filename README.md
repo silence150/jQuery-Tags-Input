@@ -13,7 +13,7 @@ list of tags!
 
 [Test it yourself using this jsFiddle Demo](http://jsfiddle.net/7aDak/)
 
-Created by [XOXCO](http://xoxco.com)
+Created by [XOXCO](http://xoxco.com), modified by [Josef Ottosson](http://josf.se)
 
 
 ## Instructions
