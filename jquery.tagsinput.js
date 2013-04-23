@@ -164,17 +164,17 @@
 	$.fn.tagExist = function(val, options) {
 		var id = $(this).attr('id');
 		var tagslist = $(this).val().split(delimiter[id]);
-		var rslt = null
+		var rslt = null;
 		$.each(tagslist, function(index, existingVal) {
-			if (options.caseSentive) {
-				val = val.toLowerCase()
-				existingVal = existingVal.toLowerCase()
+			if (!options.caseSentive) {
+				val = val.toLowerCase();
+				existingVal = existingVal.toLowerCase();
 			}
-			if (rslt == null && existingVal.equals(val)) {
+			if (rslt === null && existingVal === val) {
 				rslt = index;
 				return false; //"break"
-  		}
-		})
+  			}
+		});
 		
 		return (rslt !== null); //true when tag exists, false when not
 	};
@@ -280,7 +280,7 @@
 					} else if (jQuery.ui.autocomplete !== undefined) {
 						$(data.fake_input).autocomplete(autocomplete_options);
 						$(data.fake_input).bind('autocompleteselect',data,function(event,ui) {
-							$(event.data.real_input).addTag(ui.item.value,{focus:true,unique:(settings.unique),,caseSensitive:(settings.caseSensitive)});
+							$(event.data.real_input).addTag(ui.item.value,{focus:true,unique:(settings.unique),caseSensitive:(settings.caseSensitive)});
 							return false;
 						});
 					}
